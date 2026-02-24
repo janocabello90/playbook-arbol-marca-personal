@@ -94,14 +94,22 @@ export default async function handler(req, res) {
     });
   } catch(e) { console.error('Email error:', e); }
 
-  // 3. Disparar secuencia en Make
+  // 3. Añadir contacto a Loops y disparar secuencia
   try {
-    await fetch('https://hook.eu1.make.com/24ujvqmi4mim36mljwni32z9p7h7', {
+    await fetch('https://app.loops.so/api/v1/contacts/create', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, firstName })
+      headers: {
+        'Authorization': 'Bearer 9a678a7ee72f3acba3fadcfac468ff8b',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        firstName,
+        lastName: name.split(' ').slice(1).join(' ') || '',
+        source: 'playbook-arbol'
+      })
     });
-  } catch(e) { console.error('Make webhook error:', e); }
+  } catch(e) { console.error('Loops contact error:', e); }
 
   // 4. Notificación a Jano
   try {
