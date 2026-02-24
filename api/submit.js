@@ -94,7 +94,16 @@ export default async function handler(req, res) {
     });
   } catch(e) { console.error('Email error:', e); }
 
-  // 3. Notificación a Jano
+  // 3. Disparar secuencia en Make
+  try {
+    await fetch('https://hook.eu1.make.com/24ujvqmi4mim36mljwni32z9p7h7', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, firstName })
+    });
+  } catch(e) { console.error('Make webhook error:', e); }
+
+  // 4. Notificación a Jano
   try {
     await fetch('https://api.resend.com/emails', {
       method: 'POST',
