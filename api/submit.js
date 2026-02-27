@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -8,6 +7,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { name, email, respuestas } = req.body;
+  console.log('📥 Lead recibido:', { name, email });
 
   if (!name || !email) return res.status(400).json({ error: 'Faltan datos' });
 
@@ -16,9 +16,13 @@ export default async function handler(req, res) {
   const JANO_EMAIL = process.env.JANO_EMAIL;
   const firstName = name.split(' ')[0];
 
+  console.log('🔑 API_KEY presente:', !!API_KEY);
+  console.log('🎯 AUDIENCE_ID:', AUDIENCE_ID);
+  console.log('📧 JANO_EMAIL:', JANO_EMAIL);
+
   // 1. Añadir contacto al Audience
   try {
-    await fetch(`https://api.resend.com/audiences/${AUDIENCE_ID}/contacts`, {
+    const audRes = await fetch(`https://api.resend.com/audiences/${AUDIENCE_ID}/contacts`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${API_KEY}`,
@@ -31,6 +35,8 @@ export default async function handler(req, res) {
         unsubscribed: false
       })
     });
+    const audData = await audRes.json();
+    console.log('👥 Audience response:', audRes.status, JSON.stringify(audData));
   } catch(e) { console.error('Audience error:', e); }
 
   // 2. Email con informe al usuario
@@ -79,7 +85,7 @@ export default async function handler(req, res) {
     </div>`;
 
   try {
-    await fetch('https://api.resend.com/emails', {
+    const emailRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${API_KEY}`,
@@ -92,11 +98,13 @@ export default async function handler(req, res) {
         html: informeHtml
       })
     });
+    const emailData = await emailRes.json();
+    console.log('📨 Email informe response:', emailRes.status, JSON.stringify(emailData));
   } catch(e) { console.error('Email error:', e); }
 
-  // 3. Añadir contacto a Loops y disparar secuencia
+  // 3. Añadir contacto a Loops
   try {
-    await fetch('https://app.loops.so/api/v1/contacts/create', {
+    const loopsRes = await fetch('https://app.loops.so/api/v1/contacts/create', {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer 9a678a7ee72f3acba3fadcfac468ff8b',
@@ -109,11 +117,13 @@ export default async function handler(req, res) {
         source: 'playbook-arbol'
       })
     });
-  } catch(e) { console.error('Loops contact error:', e); }
+    const loopsData = await loopsRes.json();
+    console.log('🔄 Loops response:', loopsRes.status, JSON.stringify(loopsData));
+  } catch(e) { console.error('Loops error:', e); }
 
   // 4. Notificación a Jano
   try {
-    await fetch('https://api.resend.com/emails', {
+    const notifRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${API_KEY}`,
@@ -126,6 +136,8 @@ export default async function handler(req, res) {
         html: `<p><strong>${name}</strong> (${email}) ha completado el playbook.</p><p>Campos rellenados: ${Object.keys(respuestas || {}).length}</p>`
       })
     });
+    const notifData = await notifRes.json();
+    console.log('🔔 Notif response:', notifRes.status, JSON.stringify(notifData));
   } catch(e) { console.error('Notify error:', e); }
 
   return res.status(200).json({ ok: true });
