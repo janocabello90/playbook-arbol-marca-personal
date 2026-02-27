@@ -15,6 +15,7 @@ export default async function handler(req, res) {
   const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID;
   const JANO_EMAIL = process.env.JANO_EMAIL;
   const firstName = name.split(' ')[0];
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   console.log('🔑 API_KEY presente:', !!API_KEY);
   console.log('🎯 AUDIENCE_ID:', AUDIENCE_ID);
@@ -39,6 +40,7 @@ export default async function handler(req, res) {
     console.log('👥 Audience response:', audRes.status, JSON.stringify(audData));
   } catch(e) { console.error('Audience error:', e); }
 
+  await sleep(600);
   // 2. Email con informe al usuario
   const moduloLabels = {
     ws_1: '🌱 La Semilla — Propósito',
@@ -121,6 +123,7 @@ export default async function handler(req, res) {
     console.log('🔄 Loops response:', loopsRes.status, JSON.stringify(loopsData));
   } catch(e) { console.error('Loops error:', e); }
 
+  await sleep(600);
   // 4. Notificación a Jano
   try {
     const notifRes = await fetch('https://api.resend.com/emails', {
