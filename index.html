@@ -665,6 +665,20 @@
     content: '✓';
     font-weight: 700;
   }
+
+@media (max-width: 600px) {
+  .polaroid-slide {
+    width: 82vw !important;
+    flex: 0 0 82vw !important;
+  }
+  .polaroid-track {
+    padding: 20px 9vw 40px !important;
+    scroll-snap-type: x mandatory;
+  }
+  .polaroid-slide {
+    scroll-snap-align: center;
+  }
+}
 </style>
 </head>
 <body>
@@ -1619,25 +1633,24 @@ Tenía las semillas; ahora tenía que regar.
 
       <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:16px;">Prueba gratuita · Sin permanencia · $39/mes después</div>
 
-      <div style="display:flex;justify-content:center;gap:40px;margin-top:48px;padding-top:40px;border-top:1px solid rgba(245,230,200,0.2);flex-wrap:wrap;">
-        <div style="text-align:center;">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--white);">PDF</div>
-          <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,230,200,0.75);">Editable gratis</div>
-        </div>
-        <div style="width:1px;background:rgba(255,255,255,0.2);"></div>
-        <div style="text-align:center;">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--white);">2</div>
-          <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,230,200,0.75);">Cursos completos</div>
-        </div>
-        <div style="width:1px;background:rgba(255,255,255,0.2);"></div>
-        <div style="text-align:center;">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--white);">∞</div>
-          <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,230,200,0.75);">Comunidad viva</div>
-        </div>
-        <div style="width:1px;background:rgba(255,255,255,0.2);"></div>
-        <div style="text-align:center;">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--white);">☕</div>
-          <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,230,200,0.75);">Jano dentro</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;text-transform:uppercase;color:#f5e6c8;margin-bottom:24px;text-align:center;text-decoration:underline;text-underline-offset:6px;">Todo esto por 39$/mes</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;max-width:480px;margin:0 auto;">
+          <div style="background:rgba(0,0,0,0.2);padding:20px 16px;text-align:center;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#d4922a;line-height:1;">2.000€</div>
+            <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,230,200,0.75);margin-top:6px;">en formaciones incluidas</div>
+          </div>
+          <div style="background:rgba(0,0,0,0.2);padding:20px 16px;text-align:center;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#d4922a;line-height:1;">1 café</div>
+            <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,230,200,0.75);margin-top:6px;">de mentoría semanal</div>
+          </div>
+          <div style="background:rgba(0,0,0,0.2);padding:20px 16px;text-align:center;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#d4922a;line-height:1;">Retos</div>
+            <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,230,200,0.75);margin-top:6px;">y rendición de cuentas</div>
+          </div>
+          <div style="background:rgba(0,0,0,0.2);padding:20px 16px;text-align:center;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#d4922a;line-height:1;">Jano</div>
+            <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,230,200,0.75);margin-top:6px;">dentro todos los días</div>
+          </div>
         </div>
       </div>
     </div>
