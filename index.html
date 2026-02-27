@@ -670,13 +670,16 @@
   .polaroid-slide {
     width: 82vw !important;
     flex: 0 0 82vw !important;
+    scroll-snap-align: center;
   }
   .polaroid-track {
     padding: 20px 9vw 40px !important;
     scroll-snap-type: x mandatory;
   }
-  .polaroid-slide {
-    scroll-snap-align: center;
+  .mobile-fullwidth {
+    margin-left: -24px !important;
+    margin-right: -24px !important;
+    border-radius: 0 !important;
   }
 }
 </style>
@@ -1569,7 +1572,7 @@ Tenía las semillas; ahora tenía que regar.
     </div>
 
     <!-- POLAROID CAROUSEL -->
-<div style="background:#211608;padding:60px 0 40px;">
+<div class="mobile-fullwidth" style="background:#211608;padding:60px 0 40px;">
   <div style="font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);text-align:center;margin-bottom:40px;">Esto es la comunidad</div>
   <div id="polaroid-track" style="display:flex;gap:28px;overflow-x:auto;padding:20px 60px 40px;scrollbar-width:none;-ms-overflow-style:none;align-items:center;cursor:grab;user-select:none;">
     
@@ -1624,7 +1627,7 @@ Tenía las semillas; ahora tenía que regar.
 </script>
 
     <!-- PRINCIPIO 4: Estado fisiológico — CTA urgencia -->
-    <div style="background:var(--accent);padding:64px 52px;text-align:center;">
+    <div class="mobile-fullwidth" style="background:var(--accent);padding:64px 52px;text-align:center;">
       <div style="font-size:11px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:rgba(245,230,200,0.75);margin-bottom:20px;">Ese impulso que sientes ahora mismo es real</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,6vw,72px);line-height:0.95;letter-spacing:1px;margin-bottom:24px;color:var(--white);">No lo dejes<br>enfriar.</div>
       <p style="font-size:16px;line-height:1.7;color:rgba(245,230,200,0.85);max-width:480px;margin:0 auto 40px;">La claridad que tienes ahora mismo sobre tu marca es el mejor momento para dar el siguiente paso. La comunidad, el PDF editable, el curso completo — todo dentro.</p>
