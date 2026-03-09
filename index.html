@@ -1828,61 +1828,15 @@ async function submitLead() {
     if (el.value.trim()) respuestas[el.dataset.key] = el.value.trim();
   });
 
+  try {
+    await fetch('/api/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, respuestas })
+    });
+  } catch(e) { console.log('Submit error:', e); }
+
   const firstName = name.split(' ')[0];
-
-  // 1. Añadir contacto al Audience de Resend
-  try {
-    await fetch('https://api.resend.com/audiences/' + RESEND_AUDIENCE_ID + '/contacts', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + RESEND_API_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: email,
-        first_name: firstName,
-        last_name: name.split(' ').slice(1).join(' ') || '',
-        unsubscribed: false
-      })
-    });
-  } catch(e) { console.log('Audience error:', e); }
-
-  // 2. Enviar email con el informe al usuario
-  const informeHtml = buildInformeHtml(name, respuestas);
-
-  try {
-    await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + RESEND_API_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        from: 'Jano Cabello <hola@janocabello.com>',
-        to: [email],
-        subject: '🌳 Tu Árbol de Marca Personal — ' + firstName,
-        html: informeHtml
-      })
-    });
-  } catch(e) { console.log('Email error:', e); }
-
-  // 3. Notificación a Jano
-  try {
-    await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + RESEND_API_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        from: 'Playbook <hola@janocabello.com>',
-        to: [JANO_EMAIL],
-        subject: '🦍 Nuevo lead: ' + name + ' (' + email + ')',
-        html: '<p><strong>' + name + '</strong> (' + email + ') ha completado el playbook.</p><p>Campos rellenados: ' + Object.keys(respuestas).length + '</p>'
-      })
-    });
-  } catch(e) { console.log('Notify error:', e); }
-
   msg.style.display = 'block';
   msg.textContent = '🌳 ¡Listo, ' + firstName + '! Revisa tu bandeja de entrada.';
   btn.style.display = 'none';
