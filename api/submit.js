@@ -104,9 +104,10 @@ export default async function handler(req, res) {
     console.log('📨 Email informe response:', emailRes.status, JSON.stringify(emailData));
   } catch(e) { console.error('Email error:', e); }
 
-  // 3. Añadir contacto a Loops
+  // 3. Añadir contacto a Loops + disparar evento para activar la secuencia
   try {
-    const loopsRes = await fetch('https://app.loops.so/api/v1/contacts/create', {
+    // Primero crear/actualizar el contacto
+    await fetch('https://app.loops.so/api/v1/contacts/create', {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer 9a678a7ee72f3acba3fadcfac468ff8b',
@@ -119,8 +120,21 @@ export default async function handler(req, res) {
         source: 'playbook-arbol'
       })
     });
+
+    // Luego disparar el evento manualmente (por si el contacto ya existía)
+    const loopsRes = await fetch('https://app.loops.so/api/v1/events/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer 9a678a7ee72f3acba3fadcfac468ff8b',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        eventName: 'contact.created'
+      })
+    });
     const loopsData = await loopsRes.json();
-    console.log('🔄 Loops response:', loopsRes.status, JSON.stringify(loopsData));
+    console.log('🔄 Loops event response:', loopsRes.status, JSON.stringify(loopsData));
   } catch(e) { console.error('Loops error:', e); }
 
   await sleep(600);
