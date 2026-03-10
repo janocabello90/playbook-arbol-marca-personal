@@ -14,14 +14,11 @@ export default async function handler(req, res) {
   const API_KEY = process.env.RESEND_API_KEY;
   const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID;
   const JANO_EMAIL = process.env.JANO_EMAIL;
+  const NOTION_TOKEN = process.env.NOTION_TOKEN;
   const firstName = name.split(' ')[0];
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-  console.log('🔑 API_KEY presente:', !!API_KEY);
-  console.log('🎯 AUDIENCE_ID:', AUDIENCE_ID);
-  console.log('📧 JANO_EMAIL:', JANO_EMAIL);
-
-  // 1. Añadir contacto al Audience
+  // 1. Añadir contacto al Audience de Resend
   try {
     const audRes = await fetch(`https://api.resend.com/audiences/${AUDIENCE_ID}/contacts`, {
       method: 'POST',
@@ -41,6 +38,7 @@ export default async function handler(req, res) {
   } catch(e) { console.error('Audience error:', e); }
 
   await sleep(600);
+
   // 2. Email con informe al usuario
   const moduloLabels = {
     ws_1: '🌱 La Semilla — Propósito',
@@ -61,7 +59,7 @@ export default async function handler(req, res) {
       bloques += `
         <div style="margin-bottom:24px;padding:20px 24px;background:#f9f4ec;border-left:4px solid #c4522a;">
           <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#c4522a;margin-bottom:8px;">${label}</div>
-          <div style="font-size:15px;line-height:1.7;color:#2a1f0e;">${respuestas[key].replace(/\n/g,'<br>')}</div>
+          <div style="font-size:15px;line-height:1.7;color:#2a1f0e;">${respuestas[key].split('\n').join('<br>')}</div>
         </div>`;
     }
   }
@@ -104,9 +102,8 @@ export default async function handler(req, res) {
     console.log('📨 Email informe response:', emailRes.status, JSON.stringify(emailData));
   } catch(e) { console.error('Email error:', e); }
 
-  // 3. Añadir contacto a Loops + disparar evento para activar la secuencia
+  // 3. Añadir contacto a Loops + disparar evento
   try {
-    // Primero crear/actualizar el contacto
     await fetch('https://app.loops.so/api/v1/contacts/create', {
       method: 'POST',
       headers: {
@@ -121,7 +118,6 @@ export default async function handler(req, res) {
       })
     });
 
-    // Luego disparar el evento manualmente (por si el contacto ya existía)
     const loopsRes = await fetch('https://app.loops.so/api/v1/events/send', {
       method: 'POST',
       headers: {
@@ -138,7 +134,39 @@ export default async function handler(req, res) {
   } catch(e) { console.error('Loops error:', e); }
 
   await sleep(600);
-  // 4. Notificación a Jano
+
+  // 4. Guardar respuestas en Notion
+  try {
+    const notionRes = await fetch('https://api.notion.com/v1/pages', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${NOTION_TOKEN}`,
+        'Content-Type': 'application/json',
+        'Notion-Version': '2022-06-28'
+      },
+      body: JSON.stringify({
+        parent: { database_id: 'e86c957e-a793-4d83-ade3-32754e417acd' },
+        properties: {
+          'Nombre':             { title:     [{ text: { content: name } }] },
+          'Email':              { email:     email },
+          'Módulos completados':{ number:    Object.keys(respuestas || {}).length },
+          '🌱 Propósito':       { rich_text: [{ text: { content: (respuestas?.ws_1 || '').substring(0, 2000) } }] },
+          '🌿 Identidad':       { rich_text: [{ text: { content: (respuestas?.ws_2 || '').substring(0, 2000) } }] },
+          '🪵 Posicionamiento': { rich_text: [{ text: { content: (respuestas?.ws_3 || '').substring(0, 2000) } }] },
+          '🌲 Diferenciación':  { rich_text: [{ text: { content: (respuestas?.ws_4 || '').substring(0, 2000) } }] },
+          '☁️ Percepción':      { rich_text: [{ text: { content: (respuestas?.ws_5 || '').substring(0, 2000) } }] },
+          '🍎 Impacto':         { rich_text: [{ text: { content: (respuestas?.ws_6 || '').substring(0, 2000) } }] },
+          '🌍 Contexto':        { rich_text: [{ text: { content: (respuestas?.ws_7 || '').substring(0, 2000) } }] },
+          '⏳ Paciencia':       { rich_text: [{ text: { content: (respuestas?.ws_8 || '').substring(0, 2000) } }] },
+          '📦 Oferta':          { rich_text: [{ text: { content: (respuestas?.ws_9 || '').substring(0, 2000) } }] }
+        }
+      })
+    });
+    const notionData = await notionRes.json();
+    console.log('📓 Notion response:', notionRes.status, JSON.stringify(notionData).substring(0, 200));
+  } catch(e) { console.error('Notion error:', e); }
+
+  // 5. Notificación a Jano
   try {
     const notifRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
