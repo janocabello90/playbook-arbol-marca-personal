@@ -167,7 +167,7 @@ export default async function handler(req, res) {
         'Notion-Version': '2022-06-28'
       },
       body: JSON.stringify({
-        parent: { database_id: 'e86c957e-a793-4d83-ade3-32754e417acd' },
+        parent: { database_id: 'e9aaf98e9a62413f96d29401d578e2e8' },
         properties: notionProperties,
         children: notionChildren
       })
